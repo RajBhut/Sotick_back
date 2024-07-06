@@ -1,7 +1,8 @@
     import express from "express";
+    import cors from "cors";
     const app = express();
     import http from "http";
-
+app.use(cors());
     import { Server } from "socket.io";
     
     import connectDB from "./db.js";
