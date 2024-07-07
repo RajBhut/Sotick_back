@@ -11,13 +11,11 @@
     app.use(express.json());
 
     const io = new Server(server, {
-    cors: {
         cors: {
-            origin: ["http://localhost:5173", "https://soticktack.vercel.app"], 
-            methods: ["GET", "POST"],
+          origin: ["http://localhost:5173", "https://soticktack.vercel.app"], 
+          methods: ["GET", "POST"],
         },
-    },
-    });
+      });
 
     const clients = {}; 
     const games = {};
