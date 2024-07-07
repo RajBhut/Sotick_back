@@ -12,10 +12,10 @@
     
     const io = new Server(server, {
     cors: {
-        origin: "*",
+        origin: ["http://localhost:3000","https://soticktack.vercel.app/"]
     },
 
-    
+
     });
 
     const clients = {}; 
@@ -99,8 +99,8 @@
 
     
     });
-
-    server.listen(3000, () => {
+    const PORT = process.env.PORT || 3000;
+    server.listen(PORT, () => {
     console.log("listening on *:3000");
 
     });
