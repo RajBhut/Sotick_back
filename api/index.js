@@ -9,13 +9,9 @@
 
     const server = http.createServer(app);
     app.use(express.json());
-    app.use(cors({ origin:  ["https://soticktack.vercel.app", "https://soticktack.vercel.app/game","localhost:3000"], credentials: true }));
+    app.use(cors({ origin:  "*", credentials: true }));
     const io = new Server(server, {
-    cors: {
-        origin: ["https://soticktack.vercel.app", "https://soticktack.vercel.app/game","localhost:3000"],
-        methods: ["GET", "POST"],
-        credentials: true
-    }
+
     });
 
     const clients = {}; 
