@@ -9,9 +9,13 @@
 
     const server = http.createServer(app);
     app.use(express.json());
-    app.use(cors({ origin:  "*" }));
+    
     const io = new Server(server, {
+    cors: {
+        origin: "*",
+    },
 
+    
     });
 
     const clients = {}; 
