@@ -2,7 +2,7 @@
     import cors from "cors";
     const app = express();
     import http from "http";
-app.use(cors());
+
     import { Server } from "socket.io";
     
     import connectDB from "./db.js";
@@ -12,8 +12,10 @@ app.use(cors());
 
     const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173",
-        methods: ["GET", "POST"],
+        cors: {
+            origin: ["http://localhost:5173", "https://soticktack.vercel.app"], 
+            methods: ["GET", "POST"],
+        },
     },
     });
 
