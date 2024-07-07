@@ -1,18 +1,18 @@
     import express from "express";
-    import cors from "cors";
+   
     const app = express();
     import http from "http";
 
     import { Server } from "socket.io";
     
-    import connectDB from "./db.js";
+   
 
     const server = http.createServer(app);
     app.use(express.json());
 
     const io = new Server(server, {
         cors: {
-          origin: ["http://localhost:5173", "https://soticktack.vercel.app"], 
+          origin: ["*"], 
           methods: ["GET", "POST"],
         },
       });
@@ -27,14 +27,14 @@
 
     socket.on("reset", (data) => {
         const { gameId, userId } = data;
-        // Check if user is valid player in the game (host or guest)
+       
        io.to(gameId).emit("reset");
     }   );
  
-      // Handle "move" event
+     
   socket.on("move", (data) => {
     const { gameId, userId, index, currentPlayer } = data;
-    console.log("move event received", data);
+ 
     
    
 
