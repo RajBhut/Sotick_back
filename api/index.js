@@ -11,7 +11,7 @@
     app.use(express.json());
     const io = new Server(server, {
         cors: {
-            origin: ["https://soticktack.vercel.app", "https://soticktack.vercel.app/game"],
+            origin: ["https://sotick-back.vercel.app/", "https://soticktack.vercel.app/game","localhost:3000"],
             methods: ["GET", "POST"],
         },
     });
