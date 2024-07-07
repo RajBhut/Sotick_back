@@ -12,7 +12,7 @@
 
     const io = new Server(server, {
         cors: {
-          origin: ["*"], 
+          origin: ["https://soticktack.vercel.app/", "https://soticktack.vercel.app/game"], 
           methods: ["GET", "POST"],
         },
       });
