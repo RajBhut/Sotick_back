@@ -9,7 +9,7 @@
 
     const server = http.createServer(app);
     app.use(express.json());
-    app.use(cors({ origin:  "*", credentials: true }));
+    app.use(cors({ origin:  "*" }));
     const io = new Server(server, {
 
     });
