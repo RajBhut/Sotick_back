@@ -5,14 +5,14 @@
 
     import { Server } from "socket.io";
     
-    import cors from "cors"
+   
 
     const server = http.createServer(app);
     app.use(express.json());
     
     const io = new Server(server, {
     cors: {
-        origin: ["http://localhost:3000","https://soticktack.vercel.app/"]
+        origin: "https://soticktack.vercel.app/"
     },
 
 
