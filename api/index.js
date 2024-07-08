@@ -47,7 +47,7 @@
     
         const { userId, gameId } = data;
 
-        if (games[gameId].host === userId || games[gameId].guests.includes(userId)) {
+        if (games[gameId].host === userId || games[gameId].guests === userId) {
             return;
         }
         if (!games[gameId]) {
