@@ -47,14 +47,16 @@
     
         const { userId, gameId } = data;
 
-
+        if (games[gameId].host === userId || games[gameId].guests.includes(userId)) {
+            return;
+        }
         if (!games[gameId]) {
         games[gameId] = {
             host: userId,
             guest: null,
         };
         } else {
-
+         
         if (games[gameId].guest) {
             socket.emit("gameFull", "Game is already full.");
             return;
