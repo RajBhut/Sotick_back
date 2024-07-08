@@ -6,7 +6,7 @@
     import { Server } from "socket.io";
     import cors from "cors";
    
-    app.use(cors({ origin: 'https://soticktack.vercel.app/' })); 
+    app.use(cors({ origin: 'https://soticktack.vercel.app' })); 
     const server = http.createServer(app);
     app.use(express.json());
     
