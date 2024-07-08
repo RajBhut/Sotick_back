@@ -22,7 +22,7 @@
     const games = {};
 
     io.on("connection", (socket) => {
-    console.log("a user connected");
+    console.log(" user connected with socket id: ", socket.id);
 
 
 
@@ -64,7 +64,7 @@
 
         clients[userId] = socket.id;
         socket.join(gameId); // Join the socket.io room for this game
-        io.to(gameId).emit("playerJoined", userId); // Notify all in the room
+        io.to(gameId).emit("playerJoined with "+gameId, userId); // Notify all in the room
     });
 
 
