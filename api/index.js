@@ -6,13 +6,13 @@
     import { Server } from "socket.io";
     import cors from "cors";
    
-    app.use(cors({ origin: 'https://soticktack.vercel.app' })); 
+    app.use(cors({ origin: ['https://soticktack.vercel.app' , 'https://soticktack.rajb.codes'] })); 
     const server = http.createServer(app);
     app.use(express.json());
     
     const io = new Server(server, {
     cors: {
-        origin: "https://soticktack.vercel.app"
+        origin: ["https://soticktack.vercel.app" , "https://soticktack.rajb.codes"],
     },
 
 
