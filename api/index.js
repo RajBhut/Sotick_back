@@ -54,7 +54,11 @@
             guest: null,
         };
         } else {
-         
+         if(games[gameId].host === userId){
+            socket.emit("gameFull", "You are already in the game.");
+            return;
+        }
+
         if (games[gameId].guest) {
             socket.emit("gameFull", "Game is already full.");
             return;
@@ -63,8 +67,8 @@
         }
 
         clients[userId] = socket.id;
-        socket.join(gameId); // Join the socket.io room for this game
-        io.to(gameId).emit("playerJoined with "+gameId, userId); // Notify all in the room
+        socket.join(gameId); 
+        io.to(gameId).emit("playerJoined with "+gameId, userId , data.player); 
     });
 
 
