@@ -55,11 +55,13 @@
         };
         } else {
          if(games[gameId].host === userId){
+            console.log("You are  host already in the game." , userId);
             socket.emit("gameFull", "You are already in the game.");
             return;
         }
 
         if (games[gameId].guest) {
+            console.log("You are guest already in the game." , userId);
             socket.emit("gameFull", "Game is already full.");
             return;
         }
