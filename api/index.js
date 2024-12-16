@@ -1,116 +1,101 @@
-    import express from "express";
-   
-    const app = express();
-    import http from "http";
+import express from "express";
+import http from "http";
+import { Server } from "socket.io";
 
-    import { Server } from "socket.io";
-    import cors from "cors";
-   
-    app.use(cors({ origin: ['https://soticktack.vercel.app' , 'https://soticktack.rajb.codes'] })); 
-    const server = http.createServer(app);
-    app.use(express.json());
-    
-    const io = new Server(server, {
-    cors: {
-        origin: ["https://soticktack.vercel.app" , "https://soticktack.rajb.codes"],
-    },
+const app = express();
+const server = http.createServer(app);
 
+const io = new Server(server, {
+  cors: {
+    origin: [
+      "https://soticktack.vercel.app",
+      "https://soticktack.rajb.codes",
+      "http://localhost:5173",
+    ],
+    methods: ["GET", "POST"],
+  },
+});
 
+const clients = {};
+const games = {};
+
+io.on("connection", (socket) => {
+  const broadcastAvailableGames = () => {
+    const availableGames = {};
+    Object.keys(games).forEach((gameId) => {
+      if (!games[gameId].guest) {
+        availableGames[gameId] = games[gameId];
+      }
     });
+    io.emit("avalable_games_out", availableGames);
+  };
 
-    const clients = {}; 
-    const games = {};
+  socket.on("join", (data) => {
+    const { userId, gameId } = data;
 
-    io.on("connection", (socket) => {
-    console.log(" user connected with socket id: ", socket.id);
+    if (!games[gameId]) {
+      games[gameId] = { host: userId, guest: null };
+    } else if (games[gameId].guest) {
+      socket.emit("gameFull", "Game is already full.");
+      return;
+    } else if (games[gameId].host === userId) {
+    } else {
+      games[gameId].guest = userId;
+    }
 
+    clients[userId] = socket.id;
+    socket.join(gameId);
 
-
-    socket.on("reset", (data) => {
-        const { gameId, userId } = data;
-       
-       io.to(gameId).emit("reset");
-    }   );
- 
-     
-  socket.on("move", (data) => {
-    const { gameId, userId, index, currentPlayer } = data;
- 
-    
-   
-
-      io.to(gameId).emit("updateBoard", { index, currentPlayer }); 
+    io.to(gameId).emit("playerJoined", { gameId, userId });
   });
 
+  socket.on("move", (data) => {
+    const { gameId, index, currentPlayer } = data;
 
-    socket.on("join", (data) => {
-    
-        const { userId, gameId } = data;
+    const roomClients = io.sockets.adapter.rooms.get(gameId);
 
-       
-        if (!games[gameId]) {
-        games[gameId] = {
-            host: userId,
-            guest: null,
-        };
-        } else {
-         if(games[gameId].host === userId){
-            console.log("You are  host already in the game." , userId);
-            socket.emit("gameFull", "You are already in the game.");
-            return;
-        }
+    io.to(gameId).emit("updateBoard", { index, currentPlayer });
+  });
 
-        if (games[gameId].guest) {
-            console.log("You are guest already in the game." , userId);
-            socket.emit("gameFull", "Game is already full.");
-            return;
-        }
-        games[gameId].guest = userId;
-        }
+  socket.on("get_available_games", () => {
+    broadcastAvailableGames();
+  });
 
-        clients[userId] = socket.id;
-        socket.join(gameId); 
-        io.to(gameId).emit("playerJoined with "+gameId, userId , data.player); 
-    });
+  socket.on("disconnect", () => {
+    const userId = Object.keys(clients).find(
+      (key) => clients[key] === socket.id
+    );
 
+    if (userId) {
+      delete clients[userId];
 
-
-    
-
-    socket.on("disconnect", () => {
-        console.log("user disconnected");
-       
-        const userId = Object.keys(clients).find(key => clients[key] === socket.id);
-        if (userId) {
-        delete clients[userId];
-       
-        Object.keys(games).forEach(gameId => {
-            if (games[gameId].host === userId || games[gameId].guest === userId) {
-            if (games[gameId].guest === userId) {
-                games[gameId].guest = null;
-            } else if (games[gameId].host === userId) {
-              
-                if (games[gameId].guest) {
-                games[gameId].host = games[gameId].guest;
-                games[gameId].guest = null;
-                } else {
-                delete games[gameId];
-                }
+      Object.keys(games).forEach((gameId) => {
+        if (games[gameId].host === userId || games[gameId].guest === userId) {
+          if (games[gameId].guest === userId) {
+            games[gameId].guest = null;
+          } else if (games[gameId].host === userId) {
+            if (games[gameId].guest) {
+              games[gameId].host = games[gameId].guest;
+              games[gameId].guest = null;
+            } else {
+              delete games[gameId];
             }
-            io.to(gameId).emit("playerLeft", userId); // Notify all in the room
-            }
-        });
+          }
+          io.to(gameId).emit("playerLeft", userId);
         }
-    });
+      });
+      const availableGames = {};
+      Object.keys(games).forEach((gId) => {
+        if (!games[gId].guest) {
+          availableGames[gId] = games[gId];
+        }
+      });
+      io.emit("avalable_games_out", availableGames);
+    }
+  });
+});
 
-    
-    });
-    const PORT = process.env.PORT || 3000;
-    server.listen(PORT, () => {
-    console.log("listening on *:3000");
-
-    });
-
-    
-
-    
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Listening on *:${PORT}`);
+});
