@@ -52,12 +52,11 @@ io.on("connection", (socket) => {
   socket.on("move", (data) => {
     const { gameId, index, currentPlayer } = data;
 
-    const roomClients = io.sockets.adapter.rooms.get(gameId);
-
     io.to(gameId).emit("updateBoard", { index, currentPlayer });
   });
 
   socket.on("get_available_games", () => {
+    console.log("get_available_games");
     broadcastAvailableGames();
   });
 
